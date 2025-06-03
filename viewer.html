@@ -1,0 +1,18 @@
+<!DOCTYPE html><meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<h2>Laptop – viewing remote camera</h2>
+<video id="remote" playsinline autoplay style="width:90%;max-width:640px;"></video>
+
+<script>
+const url = new URL(location);
+const remoteId = url.searchParams.get('id') || prompt('Phone peer ID?');
+const peer  = new Peer();
+peer.on('open', () => {
+  const call = peer.call(remoteId, null);   // we don’t send our own stream
+  call.on('stream', stream => {             // receive remote camera
+    document.getElementById('remote').srcObject = stream;
+  });
+  call.on('error', e => alert('Call error: ' + e));
+});
+</script>

@@ -1,0 +1,24 @@
+<!DOCTYPE html><meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<h2>Phone – broadcasting camera</h2>
+<p id="status">initialising…</p>
+<video id="local" playsinline autoplay muted style="width:90%;max-width:480px;"></video>
+
+<script>
+const peer  = new Peer();                // Creates a random peer-ID
+const video = document.getElementById('local');
+peer.on('open', id => {
+  document.getElementById('status').textContent =
+    'Share this Viewer link on your laptop:\n' +
+    location.origin + '/viewer.html?id=' + id;
+});
+
+navigator.mediaDevices.getUserMedia({ video:true, audio:false })
+  .then(stream => {
+    video.srcObject = stream;            // show local preview
+    peer.on('call', call => call.answer(stream));  // any viewer gets the stream
+  })
+  .catch(err => document.getElementById('status').textContent =
+        'Camera error: ' + err);
+</script>
